@@ -1,3 +1,7 @@
+def fitness(individual):
+    seam = construct_seam(individual)
+
+
 def construct_seam(individual):
     """
     Constructs a seam from the given individual of the form:
