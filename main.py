@@ -1,4 +1,4 @@
-from gsc import construct_seam, energy
+from gsc import construct_seam
 
 if __name__ == "__main__":
     c1 = (2, [0, -1, 2, 0])
