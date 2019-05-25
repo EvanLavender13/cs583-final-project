@@ -1,11 +1,29 @@
-from gsc import construct_seam
+import sys
+
+import cv2
+import numpy as np
+
+from gsc import get_energy_map, generate_population, get_fitness
 
 if __name__ == "__main__":
-    c1 = (2, [0, -1, 2, 0])
-    c2 = (0, [3, 1, -1, 0])
-    c3 = (0, [2, -1, -1, -1])
+    image = sys.argv[1]
 
-    print(construct_seam(c1))  # [(1, 1), (2, 1), (3, 2), (4, 2)]
-    print(construct_seam(c2))  # [(1, 3), (2, 4), (3, 3), (4, 3)]
-    print(construct_seam(c3))  # [(1, 2), (2, 1), (3, 0), (4, -1)] INVALID
+    image = cv2.imread(image, cv2.IMREAD_COLOR)
+    grayscale = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
+    print(grayscale.max(), image.max())
+
+    print(image.shape)
+
+    energy_map = get_energy_map(grayscale) / 255.0
+
+    m = energy_map.shape[0]
+
+    pivot = np.random.randint(low=0, high=m)
+
+    population = generate_population(pivot, m, 10)
+
+    print(population.shape)
+
+    for individual in population:
+        print(get_fitness(pivot, individual, energy_map))
