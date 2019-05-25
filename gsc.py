@@ -13,7 +13,7 @@ def generate_individual(pivot, m):
     return individual
 
 
-def get_fitness(pivot, individual, energy_map):
+def get_fitness(individual, pivot, energy_map):
     seam = construct_seam(pivot, individual)
 
     m = energy_map.shape[0]
@@ -21,13 +21,13 @@ def get_fitness(pivot, individual, energy_map):
     sum = 0
     for coordinate in seam:
         if coordinate[1] < 0 or coordinate[1] > m - 1:
-            return 0
+            return 0.0,
 
         sum += energy_map[coordinate[0]][coordinate[1]]
 
     fitness = (m - sum) / m
 
-    return fitness
+    return fitness,
 
 
 def get_energy_map(image):
