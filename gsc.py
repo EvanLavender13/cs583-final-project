@@ -1,33 +1,65 @@
 import cv2
 import numpy as np
+from deap import tools
 
 
-def generate_population(pivot, m, size):
-    return np.array([generate_individual(pivot, m) for i in range(size)])
+def cxSeam(ind1, ind2):
+    ind1_pivot = to_balanced_ternary(ind1.pop(ind1.pivot))
+    ind2_pivot = to_balanced_ternary(ind2.pop(ind2.pivot))
+
+    ind1_pivot_gene = [0] * 10
+    ind1_pivot_gene[-len(ind1_pivot): 10] = ind1_pivot
+
+    ind2_pivot_gene = [0] * 10
+    ind2_pivot_gene[-len(ind2_pivot): 10] = ind2_pivot
+
+    tools.cxOnePoint(ind1, ind2)
+    tools.cxOnePoint(ind1_pivot_gene, ind2_pivot_gene)
+
+    ind1.insert(ind1.pivot, to_integer(ind1_pivot_gene))
+    ind2.insert(ind2.pivot, to_integer(ind2_pivot_gene))
 
 
-def generate_individual(pivot, m):
-    individual = np.random.randint(low=-1, high=2, size=m)
-    individual[pivot] = np.random.randint(low=0, high=m)
+def to_integer(ternary):
+    decimal = 0
 
-    return individual
+    n = len(ternary)
+    for i in range(n):
+        decimal += (ternary[i] * (3 ** (n - i - 1)))
+
+    return decimal
 
 
-def get_fitness(individual, pivot, energy_map):
-    seam = construct_seam(pivot, individual)
+def to_balanced_ternary(n):
+    if n == 0:
+        return [0]
 
-    m = energy_map.shape[0]
+    ternary = []
+    while n:
+        ternary.insert(0, [0, 1, -1][n % 3])
+        n = int(-~n / 3)
+
+    return ternary
+
+
+def get_fitness(individual, energy_map):
+    seam = construct_seam(individual)
+
+    m, n = energy_map.shape[: 2]
 
     sum = 0
     for coordinate in seam:
         if coordinate[1] < 0 or coordinate[1] > m - 1:
             return 0.0,
 
+        # print(coordinate, energy_map[coordinate[0]][coordinate[1]])
+
         sum += energy_map[coordinate[0]][coordinate[1]]
 
-    fitness = (m - sum) / m
+    fitness = sum / m
+    print(sum, fitness, 1 / (fitness ** 2))
 
-    return fitness,
+    return (1 / (fitness ** 2)),
 
 
 def get_energy_map(image):
@@ -40,14 +72,15 @@ def get_energy_map(image):
     abs_grad_x = cv2.convertScaleAbs(grad_x)
     abs_grad_y = cv2.convertScaleAbs(grad_y)
 
-    energy_map = cv2.addWeighted(abs_grad_x, 0.5, abs_grad_y, 0.5, 0)
+    energy_map = cv2.addWeighted(abs_grad_x, 1.0, abs_grad_y, 1.0, 0)
+    # energy_map = abs_grad_x + abs_grad_y
 
     cv2.imwrite("energy_map.jpg", energy_map)
 
     return energy_map
 
 
-def construct_seam(pivot, individual):
+def construct_seam(individual):
     """
     Constructs a seam from the given individual of the form:
 
@@ -62,10 +95,10 @@ def construct_seam(pivot, individual):
 
     """
 
-    return np.array([(i, f_v(pivot, individual, i)) for i in range(len(individual))])
+    return np.array([(i, f_v(individual, i)) for i in range(len(individual))])
 
 
-def f_v(pivot, individual, index):
+def f_v(individual, index):
     """
     Function used to construct a seam from an individual
 
@@ -78,10 +111,11 @@ def f_v(pivot, individual, index):
         corresponding coordinate of a gene
 
     """
+    pivot = individual.pivot
 
     if index == pivot:
         return individual[index]
     elif index > pivot:
-        return individual[index] + f_v(pivot, individual, index - 1)
+        return individual[index] + f_v(individual, index - 1)
     elif index < pivot:
-        return individual[index] + f_v(pivot, individual, index + 1)
+        return individual[index] + f_v(individual, index + 1)
