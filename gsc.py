@@ -45,19 +45,16 @@ def to_balanced_ternary(n):
 def get_fitness(individual, energy_map):
     seam = construct_seam(individual)
 
-    m, n = energy_map.shape[: 2]
+    n, m = energy_map.shape[: 2]
 
-    sum = 0
+    sum = 1.0
     for coordinate in seam:
         if coordinate[1] < 0 or coordinate[1] > m - 1:
-            return 0.0,
-
-        # print(coordinate, energy_map[coordinate[0]][coordinate[1]])
+            return sum,
 
         sum += energy_map[coordinate[0]][coordinate[1]]
 
-    fitness = sum / m
-    print(sum, fitness, 1 / (fitness ** 2))
+    fitness = sum / n
 
     return (1 / (fitness ** 2)),
 
@@ -73,7 +70,6 @@ def get_energy_map(image):
     abs_grad_y = cv2.convertScaleAbs(grad_y)
 
     energy_map = cv2.addWeighted(abs_grad_x, 1.0, abs_grad_y, 1.0, 0)
-    # energy_map = abs_grad_x + abs_grad_y
 
     cv2.imwrite("energy_map.jpg", energy_map)
 
