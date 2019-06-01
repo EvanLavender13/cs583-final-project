@@ -8,7 +8,8 @@ from deap import base
 from deap import creator
 from deap import tools
 
-from gsc import get_energy_map, get_fitness, construct_seam, cxSeam
+from gsc import get_fitness, construct_seam, cxSeamOnePoint, cxSeamTwoPoint, cxSeamUniform, \
+    get_energy_map_sobel, get_energy_map_scharr
 
 if __name__ == "__main__":
     image = sys.argv[1]
@@ -22,15 +23,27 @@ if __name__ == "__main__":
     ROWS = image.shape[0]
     COLS = image.shape[1]
 
-    target_shape = (ROWS, COLS - 75)
+    target_shape = (ROWS, int(COLS - (COLS * 0.25)))
 
     print("ROWS=", ROWS)
     print("COLS=", COLS)
 
-    POP_SIZE = 6
-    MUTPB = 0.5
-    NUM_GENS = 5
+    GET_ENERGY_MAP = get_energy_map_sobel
+    #GET_ENERGY_MAP = get_energy_map_scharr
+
+    POP_SIZE = 8
+    MUTPB = 0.1
+    NUM_GENS = 8
+
+    #SELECTION = "roulette"
     SELECTION = "tournament"
+
+    #CROSSOVER = "onepoint"
+    # CROSSOVER = "twopoint"
+    CROSSOVER = "uniform"
+
+    #MUTATION = "uniform"
+    MUTATION = "shuffle"
 
     creator.create("FitnessMax", base.Fitness, weights=(1.0,))
     creator.create("Individual", list, fitness=creator.FitnessMax)
@@ -45,13 +58,23 @@ if __name__ == "__main__":
     toolbox.register("individual", tools.initRepeat, creator.Individual, toolbox.gene_value, n=ROWS)
     toolbox.register("population", tools.initRepeat, list, toolbox.individual)
 
-    toolbox.register("mate", cxSeam)
-    toolbox.register("mutate", tools.mutUniformInt, low=-1, up=1, indpb=MUTPB)
-
     if SELECTION == "roulette":
         toolbox.register("select", tools.selRoulette, k=POP_SIZE)
     elif SELECTION == "tournament":
         toolbox.register("select", tools.selTournament, k=POP_SIZE, tournsize=3)
+
+    if CROSSOVER == "onepoint":
+        toolbox.register("mate", cxSeamOnePoint)
+    elif CROSSOVER == "twopoint":
+        toolbox.register("mate", cxSeamTwoPoint)
+    elif CROSSOVER == "uniform":
+        toolbox.register("mate", cxSeamUniform)
+
+    if MUTATION == "uniform":
+        toolbox.register("mutate", tools.mutUniformInt, low=-1, up=1, indpb=MUTPB)
+    elif MUTATION == "shuffle":
+        toolbox.register("mutate", tools.mutShuffleIndexes, indpb=MUTPB)
+
 
     fig, (img_plot, tar_plot) = plt.subplots(1, 2, figsize=(12, 4))
     img_plot.axis("off")
@@ -63,7 +86,7 @@ if __name__ == "__main__":
 
     while target_image.shape[:2] != target_shape:
         grayscale = cv2.cvtColor(target_image.astype(np.uint8), cv2.COLOR_RGB2GRAY)
-        energy_map = get_energy_map(grayscale) / 255.0
+        energy_map = GET_ENERGY_MAP(grayscale) / 255.0
 
         # Need to register evaluate function to take in updated energy map
         toolbox.register("evaluate", get_fitness, energy_map=energy_map)

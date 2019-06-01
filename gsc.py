@@ -3,14 +3,56 @@ import numpy as np
 from deap import tools
 
 
-def cxSeam(ind1, ind2):
+def cxSeamUniform(ind1, ind2):
     ind1_pivot = to_balanced_ternary(ind1.pop(ind1.pivot))
     ind2_pivot = to_balanced_ternary(ind2.pop(ind2.pivot))
 
-    ind1_pivot_gene = [0] * 10
+    pivot_gene_size = max(len(ind1_pivot), len(ind2_pivot))
+
+    ind1_pivot_gene = [0] * pivot_gene_size
     ind1_pivot_gene[-len(ind1_pivot): 10] = ind1_pivot
 
-    ind2_pivot_gene = [0] * 10
+    ind2_pivot_gene = [0] * pivot_gene_size
+    ind2_pivot_gene[-len(ind2_pivot): 10] = ind2_pivot
+
+    prob = ind1.fitness.values[0] / (ind1.fitness.values[0] + ind2.fitness.values[0])
+
+    tools.cxUniform(ind1, ind2, indpb=prob)
+    tools.cxUniform(ind1_pivot_gene, ind2_pivot_gene, indpb=prob)
+
+    ind1.insert(ind1.pivot, to_integer(ind1_pivot_gene))
+    ind2.insert(ind2.pivot, to_integer(ind2_pivot_gene))
+
+
+def cxSeamTwoPoint(ind1, ind2):
+    ind1_pivot = to_balanced_ternary(ind1.pop(ind1.pivot))
+    ind2_pivot = to_balanced_ternary(ind2.pop(ind2.pivot))
+
+    pivot_gene_size = max(len(ind1_pivot), len(ind2_pivot)) + 1
+
+    ind1_pivot_gene = [0] * pivot_gene_size
+    ind1_pivot_gene[-len(ind1_pivot): 10] = ind1_pivot
+
+    ind2_pivot_gene = [0] * pivot_gene_size
+    ind2_pivot_gene[-len(ind2_pivot): 10] = ind2_pivot
+
+    tools.cxTwoPoint(ind1, ind2)
+    tools.cxTwoPoint(ind1_pivot_gene, ind2_pivot_gene)
+
+    ind1.insert(ind1.pivot, to_integer(ind1_pivot_gene))
+    ind2.insert(ind2.pivot, to_integer(ind2_pivot_gene))
+
+
+def cxSeamOnePoint(ind1, ind2):
+    ind1_pivot = to_balanced_ternary(ind1.pop(ind1.pivot))
+    ind2_pivot = to_balanced_ternary(ind2.pop(ind2.pivot))
+
+    pivot_gene_size = max(len(ind1_pivot), len(ind2_pivot)) + 1
+
+    ind1_pivot_gene = [0] * pivot_gene_size
+    ind1_pivot_gene[-len(ind1_pivot): 10] = ind1_pivot
+
+    ind2_pivot_gene = [0] * pivot_gene_size
     ind2_pivot_gene[-len(ind2_pivot): 10] = ind2_pivot
 
     tools.cxOnePoint(ind1, ind2)
@@ -62,7 +104,15 @@ def get_fitness(individual, energy_map):
     return fitness,
 
 
-def get_energy_map(image):
+def get_energy_map_scharr(image):
+    energy_map = np.absolute(cv2.Scharr(image, -1, 1, 0)) + np.absolute(cv2.Scharr(image, -1, 0, 1))
+
+    cv2.imwrite("energy_map.jpg", energy_map)
+
+    return energy_map
+
+
+def get_energy_map_sobel(image):
     grad_x = cv2.Sobel(image, cv2.CV_64F, 1, 0)
     grad_y = cv2.Sobel(image, cv2.CV_64F, 0, 1)
 
@@ -71,7 +121,7 @@ def get_energy_map(image):
 
     energy_map = cv2.addWeighted(abs_grad_x, 1.0, abs_grad_y, 1.0, 0)
 
-    # cv2.imwrite("energy_map.jpg", energy_map)
+    cv2.imwrite("energy_map.jpg", energy_map)
 
     return energy_map
 
