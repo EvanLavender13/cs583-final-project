@@ -1,5 +1,6 @@
+import argparse
+import logging
 import multiprocessing
-import sys
 
 import cv2
 import matplotlib.pyplot as plt
@@ -12,44 +13,77 @@ from gsc import get_fitness, construct_seam, cxSeamOnePoint, cxSeamTwoPoint, cxS
     get_energy_map_sobel, get_energy_map_scharr
 
 if __name__ == "__main__":
-    image = sys.argv[1]
+    logging.basicConfig(format="%(levelname)s: %(message)s", level=logging.INFO)
+    parser = argparse.ArgumentParser(description="Genetic Seam Carving")
 
-    image = cv2.imread(image, cv2.IMREAD_COLOR)
+    parser.add_argument("input", type=str, help="Input image")
+    parser.add_argument("target_shape", type=int, nargs=2, help="Target image shape in 'row col' format")
+    parser.add_argument("output", type=str, help="Output image")
+
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument("--sobel", action="store_true", help="Sobel gradient energy map")
+    group.add_argument("--scharr", action="store_true", help="Scharr gradient energy map")
+
+    parser.add_argument("pop_size", type=int, help="Population size")
+    parser.add_argument("num_gens", type=int, help="Number of generations")
+    parser.add_argument("mut_pb", type=float, help="Mutation probability")
+
+    parser.add_argument("--selection", type=str, choices=["roulette", "tournament"], help="Selection operator")
+    parser.add_argument("--crossover", type=str, choices=["onepoint", "twopoint", "uniform"], help="Crossover operator")
+    parser.add_argument("--mutation", type=str, choices=["uniform", "shuffle", "flipbit"], help="Mutation operator")
+
+    parser.add_argument("--display", action="store_true", help="Display visualization")
+    parser.add_argument("--verbose", action="store_true", help="Display information")
+
+    args = parser.parse_args()
+
+    image = cv2.imread(args.input, cv2.IMREAD_COLOR)
     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
     target_image = np.copy(image)
-
-    print(image.shape, target_image.shape)
 
     ROWS = image.shape[0]
     COLS = image.shape[1]
 
-    target_shape = (ROWS, int(COLS - (COLS * 0.25)))
+    # Vertical seams only, for now
+    target_shape = (ROWS, args.target_shape[1])
 
-    print("ROWS=", ROWS)
-    print("COLS=", COLS)
+    # Select energy map function
+    if args.sobel:
+        get_energy_map = get_energy_map_sobel
+    elif args.scharr:
+        get_energy_map = get_energy_map_scharr
+    else:
+        get_energy_map = get_energy_map_sobel
 
-    GET_ENERGY_MAP = get_energy_map_sobel
-    #GET_ENERGY_MAP = get_energy_map_scharr
+    # Get genetic algorithm parameters
+    pop_size = args.pop_size
+    num_gens = args.num_gens
+    mut_pb = args.mut_pb
 
-    POP_SIZE = 8
-    MUTPB = 0.1
-    NUM_GENS = 8
+    # Select genetic operators
+    selection = args.selection if args.selection else "roulette"
+    crossover = args.crossover if args.crossover else "onepoint"
+    mutation = args.mutation if args.mutation else "uniform"
 
-    #SELECTION = "roulette"
-    SELECTION = "tournament"
+    # Stuff to look at
+    display = args.display
+    verbose = args.verbose
 
-    #CROSSOVER = "onepoint"
-    # CROSSOVER = "twopoint"
-    CROSSOVER = "uniform"
-
-    #MUTATION = "uniform"
-    MUTATION = "shuffle"
+    logging.info("Carving %s to size %s and saving result to %s" % (args.input, target_shape, args.output))
+    logging.info("Evolving populations of size %s for %s generations with a mutation probability of %s" %
+                 (pop_size, num_gens, mut_pb))
+    logging.info("Selection operator: %s" % selection)
+    logging.info("Crossover operator: %s" % crossover)
+    logging.info("Mutation operator: %s" % mutation)
 
     creator.create("FitnessMax", base.Fitness, weights=(1.0,))
     creator.create("Individual", list, fitness=creator.FitnessMax)
 
+    # For multi-core support
+    # Calls to toolbox.map will be multi-threaded (or something)
     pool = multiprocessing.Pool()
 
+    # Set up some handy dandy tools
     toolbox = base.Toolbox()
     toolbox.register("map", pool.map)
     toolbox.register("gene_value", np.random.randint, low=-1, high=2)
@@ -58,41 +92,46 @@ if __name__ == "__main__":
     toolbox.register("individual", tools.initRepeat, creator.Individual, toolbox.gene_value, n=ROWS)
     toolbox.register("population", tools.initRepeat, list, toolbox.individual)
 
-    if SELECTION == "roulette":
-        toolbox.register("select", tools.selRoulette, k=POP_SIZE)
-    elif SELECTION == "tournament":
-        toolbox.register("select", tools.selTournament, k=POP_SIZE, tournsize=3)
+    # Register selection operator based on args
+    if selection == "roulette":
+        toolbox.register("select", tools.selRoulette, k=pop_size)
+    elif selection == "tournament":
+        toolbox.register("select", tools.selTournament, k=pop_size, tournsize=3)
 
-    if CROSSOVER == "onepoint":
+    # Register crossover operator based on args
+    if crossover == "onepoint":
         toolbox.register("mate", cxSeamOnePoint)
-    elif CROSSOVER == "twopoint":
+    elif crossover == "twopoint":
         toolbox.register("mate", cxSeamTwoPoint)
-    elif CROSSOVER == "uniform":
+    elif crossover == "uniform":
         toolbox.register("mate", cxSeamUniform)
 
-    if MUTATION == "uniform":
-        toolbox.register("mutate", tools.mutUniformInt, low=-1, up=1, indpb=MUTPB)
-    elif MUTATION == "shuffle":
-        toolbox.register("mutate", tools.mutShuffleIndexes, indpb=MUTPB)
+    # Register mutation operator based on args
+    if mutation == "uniform":
+        toolbox.register("mutate", tools.mutUniformInt, low=-1, up=1, indpb=mut_pb)
+    elif mutation == "shuffle":
+        toolbox.register("mutate", tools.mutShuffleIndexes, indpb=mut_pb)
+    elif mutation == "flipbit":
+        toolbox.register("mutate", tools.mutFlipBit, indpb=mut_pb)
 
+    if display:
+        plt.figure()
+        plt.axis("off")
+        plt.ion()
 
-    fig, (img_plot, tar_plot) = plt.subplots(1, 2, figsize=(12, 4))
-    img_plot.axis("off")
-    tar_plot.axis("off")
-    plt.ion()
+        img_data = plt.imshow(image)
 
-    img_data = img_plot.imshow(image)
-    tar_data = tar_plot.imshow(target_image)
-
+    # Go until we have the right shape
     while target_image.shape[:2] != target_shape:
+        # Convert to grayscale and get energy map
         grayscale = cv2.cvtColor(target_image.astype(np.uint8), cv2.COLOR_RGB2GRAY)
-        energy_map = GET_ENERGY_MAP(grayscale) / 255.0
+        energy_map = get_energy_map(grayscale) / 255.0
 
-        # Need to register evaluate function to take in updated energy map
+        # Need to re-register evaluate function to take in updated energy map
         toolbox.register("evaluate", get_fitness, energy_map=energy_map)
 
-        # Initialize population and pivot position value
-        population = toolbox.population(n=POP_SIZE)
+        # Initialize population and pivot values
+        population = toolbox.population(n=pop_size)
         for individual in population:
             pivot = toolbox.pivot_index(high=target_image.shape[0] - 1)
             individual[pivot] = toolbox.pivot_value(high=target_image.shape[1] - 1)
@@ -103,10 +142,9 @@ if __name__ == "__main__":
         for ind, fit in zip(population, fitnesses):
             ind.fitness.values = fit
 
-        for g in range(NUM_GENS):
-
+        for g in range(num_gens):
             # Select next generation
-            offspring = toolbox.select(population, k=POP_SIZE)
+            offspring = toolbox.select(population, k=pop_size)
 
             # Clone them
             offspring = list(toolbox.map(toolbox.clone, offspring))
@@ -124,7 +162,7 @@ if __name__ == "__main__":
                 mutant[mutant.pivot] = 0
                 toolbox.mutate(mutant)
 
-                if np.random.random() < MUTPB:
+                if np.random.random() < 1.0:
                     mutant.pivot = toolbox.pivot_index(high=target_image.shape[0] - 1)
                     mutant[mutant.pivot] = toolbox.pivot_value(high=target_image.shape[1] - 1)
                 else:
@@ -143,16 +181,20 @@ if __name__ == "__main__":
 
         u_max = np.max([individual.fitness.values[0] for individual in population])
 
+        if verbose:
+            logging.info("Maximum fitness: %s" % u_max)
+
         S = [individual for individual in population if individual.fitness.values[0] == u_max and u_max > 1.0]
 
         for individual in S:
             m, n = target_image.shape[: 2]
 
-            print("m, n=", m, n)
-
             seam = construct_seam(individual)
 
             output = np.zeros(shape=(m, n - 1, 3))
+
+            if display:
+                display_output = np.copy(target_image)
 
             for row in range(m):
                 col = seam[row][1]
@@ -161,21 +203,19 @@ if __name__ == "__main__":
                 output[row, :, 1] = np.delete(target_image[row, :, 1], [col])
                 output[row, :, 2] = np.delete(target_image[row, :, 2], [col])
 
-                col_diff = image.shape[1] - target_image.shape[1]
-                image[row, col + col_diff] = [255, 0, 0]
+                if display:
+                    display_output[row, col] = [255, 0, 0]
 
             target_image = np.copy(output)
 
-        img_data.set_data(image.astype(np.int))
-        tar_data.set_data(
-            np.hstack([target_image.astype(np.int),
-                       np.zeros(shape=(ROWS, COLS - target_image.shape[1], 3), dtype=np.uint8)]))
+        if display:
+            img_data.set_data(np.hstack([display_output.astype(np.int),
+                           np.zeros(shape=(ROWS, COLS - target_image.shape[1], 3), dtype=np.uint8)]))
 
-        plt.draw()
-        plt.pause(0.00001)
+            plt.draw()
+            plt.pause(0.00001)
 
     image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
     target_image = cv2.cvtColor(target_image.astype(np.uint8), cv2.COLOR_RGB2BGR)
 
-    cv2.imwrite("seams_removed.jpg", target_image)
-    cv2.imwrite("seams_shown.jpg", image)
+    cv2.imwrite(args.output, target_image)
