@@ -15,9 +15,9 @@ time python3 main.py images/waterfall.jpg 263 316 output/waterfall/10_10_05_defa
 time python3 main.py images/waterfall.jpg 263 316 output/waterfall/25_10_05_default.jpg 25 10 0.05
 
 mkdir -p output/mountain
-time python3 main.py images/moutain.jpg 269 304 output/moutain/05_10_05_default.jpg 5 10 0.05
-time python3 main.py images/moutain.jpg 269 304 output/moutain/10_10_05_default.jpg 10 10 0.05
-time python3 main.py images/moutain.jpg 269 304 output/moutain/25_10_05_default.jpg 25 10 0.05
+time python3 main.py images/mountain.jpg 269 304 output/mountain/05_10_05_default.jpg 5 10 0.05
+time python3 main.py images/mountain.jpg 269 304 output/mountain/10_10_05_default.jpg 10 10 0.05
+time python3 main.py images/mountain.jpg 269 304 output/mountain/25_10_05_default.jpg 25 10 0.05
 
 mkdir -p output/whale
 time python3 main.py images/whale.jpg 340 408 output/whale/05_10_05_default.jpg 5 10 0.05
@@ -36,8 +36,8 @@ time python3 main.py images/waterfall.jpg 263 316 output/waterfall/10_2005_defau
 time python3 main.py images/waterfall.jpg 263 316 output/waterfall/10_3005_default.jpg 10 30 0.05
 
 mkdir -p output/mountain
-time python3 main.py images/moutain.jpg 269 304 output/moutain/10_2005_default.jpg 10 20 0.05
-time python3 main.py images/moutain.jpg 269 304 output/moutain/10_3005_default.jpg 10 30 0.05
+time python3 main.py images/mountain.jpg 269 304 output/mountain/10_2005_default.jpg 10 20 0.05
+time python3 main.py images/mountain.jpg 269 304 output/mountain/10_3005_default.jpg 10 30 0.05
 
 mkdir -p output/whale
 time python3 main.py images/whale.jpg 340 408 output/whale/10_2005_default.jpg 10 20 0.05
@@ -57,9 +57,9 @@ time python3 main.py images/waterfall.jpg 263 316 output/waterfall/10_10_15_defa
 time python3 main.py images/waterfall.jpg 263 316 output/waterfall/10_10_25_default.jpg 10 10 0.25
 
 mkdir -p output/mountain
-time python3 main.py images/moutain.jpg 269 304 output/moutain/10_10_1_default.jpg 10 10 0.1
-time python3 main.py images/moutain.jpg 269 304 output/moutain/10_10_15_default.jpg 10 10 0.15
-time python3 main.py images/moutain.jpg 269 304 output/moutain/10_10_25_default.jpg 10 10 0.25
+time python3 main.py images/mountain.jpg 269 304 output/mountain/10_10_1_default.jpg 10 10 0.1
+time python3 main.py images/mountain.jpg 269 304 output/mountain/10_10_15_default.jpg 10 10 0.15
+time python3 main.py images/mountain.jpg 269 304 output/mountain/10_10_25_default.jpg 10 10 0.25
 
 mkdir -p output/whale
 time python3 main.py images/whale.jpg 340 408 output/whale/10_10_1_default.jpg 10 10 0.1
