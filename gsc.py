@@ -107,7 +107,7 @@ def get_fitness(individual, energy_map):
 def get_energy_map_scharr(image):
     energy_map = np.absolute(cv2.Scharr(image, -1, 1, 0)) + np.absolute(cv2.Scharr(image, -1, 0, 1))
 
-    cv2.imwrite("energy_map.jpg", energy_map)
+    # cv2.imwrite("energy_map.jpg", energy_map)
 
     return energy_map
 
@@ -121,7 +121,7 @@ def get_energy_map_sobel(image):
 
     energy_map = cv2.addWeighted(abs_grad_x, 1.0, abs_grad_y, 1.0, 0)
 
-    cv2.imwrite("energy_map.jpg", energy_map)
+    # cv2.imwrite("energy_map.jpg", energy_map)
 
     return energy_map
 
