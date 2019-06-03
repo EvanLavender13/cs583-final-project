@@ -5,9 +5,9 @@ This thing does a thing.
 
 ![](https://github.com/EvanLavender13/cs583-final-project/blob/master/output/gifs/mountain.gif)
 
-## Installation
+## Requirements
 
-Clone this repo and install requirements
+Python 3
 
 ```sh
 pip install -r requirements.txt
