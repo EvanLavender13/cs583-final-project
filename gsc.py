@@ -121,7 +121,7 @@ def get_energy_map_sobel(image):
 
     energy_map = cv2.addWeighted(abs_grad_x, 1.0, abs_grad_y, 1.0, 0)
 
-    # cv2.imwrite("energy_map.jpg", energy_map)
+    cv2.imwrite("energy_map.jpg", energy_map)
 
     return energy_map
 

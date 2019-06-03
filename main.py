@@ -115,7 +115,7 @@ if __name__ == "__main__":
         toolbox.register("mutate", tools.mutFlipBit, indpb=mut_pb)
 
     if display:
-        plt.figure()
+        plt.figure(figsize=(8, 4))
         plt.axis("off")
         plt.ion()
 
@@ -210,7 +210,7 @@ if __name__ == "__main__":
 
         if display:
             img_data.set_data(np.hstack([display_output.astype(np.int),
-                           np.zeros(shape=(ROWS, COLS - target_image.shape[1], 3), dtype=np.uint8)]))
+                                         np.zeros(shape=(ROWS, COLS - target_image.shape[1], 3), dtype=np.uint8)]))
 
             plt.draw()
             plt.pause(0.00001)

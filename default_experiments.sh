@@ -71,43 +71,43 @@ mkdir -p output/whale
 #time python3 main.py images/whale.jpg 340 408 output/whale/mutpb/15.jpg 10 10 0.15
 #time python3 main.py images/whale.jpg 340 408 output/whale/mutpb/25.jpg 10 10 0.25
 ############################################################################
-
-# Mountain with Scharr
-###########################################################################
-mkdir -p output/mountain/scharr
-time python3 main.py images/mountain.jpg 269 304 output/mountain/scharr/10.jpg 10 10 0.05 --scharr
-time python3 main.py images/mountain.jpg 269 304 output/mountain/scharr/20.jpg 10 20 0.05 --scharr
-time python3 main.py images/mountain.jpg 269 304 output/mountain/scharr/30.jpg 10 30 0.05 --scharr
-###########################################################################
-
-# Waterfall with tournament selection
-###########################################################################
-mkdir -p output/waterfall/selection
-time python3 main.py images/waterfall.jpg 263 316 output/waterfall/selection/10_tournament.jpg 10 10 0.05 --selection tournament
-time python3 main.py images/waterfall.jpg 263 316 output/waterfall/selection/20_tournament.jpg 10 20 0.05 --selection tournament
-time python3 main.py images/waterfall.jpg 263 316 output/waterfall/selection/30_tournament.jpg 10 30 0.05 --selection tournament
-###########################################################################
-
-# Whale with crossover variants
-###########################################################################
-mkdir -p output/whale/crossover
-time python3 main.py images/whale.jpg 340 408 output/whale/crossover/10_twopoint.jpg 10 10 0.05 --crossover twopoint
-time python3 main.py images/whale.jpg 340 408 output/whale/crossover/20_twopoint.jpg 10 20 0.05 --crossover twopoint
-time python3 main.py images/whale.jpg 340 408 output/whale/crossover/30_twopoint.jpg 10 30 0.05 --crossover twopoint
-
-time python3 main.py images/whale.jpg 340 408 output/whale/crossover/10_uniform.jpg 10 10 0.05 --crossover uniform
-time python3 main.py images/whale.jpg 340 408 output/whale/crossover/20_uniform.jpg 10 20 0.05 --crossover uniform
-time python3 main.py images/whale.jpg 340 408 output/whale/crossover/30_uniform.jpg 10 30 0.05 --crossover uniform
-###########################################################################
-
-# Whale with mutation variants
-###########################################################################
-mkdir -p output/whale/mutation
-time python3 main.py images/whale.jpg 340 408 output/whale/mutation/10_shuffle.jpg 10 10 0.05 --mutation shuffle
-time python3 main.py images/whale.jpg 340 408 output/whale/mutation/20_shuffle.jpg 10 20 0.05 --mutation shuffle
-time python3 main.py images/whale.jpg 340 408 output/whale/mutation/30_shuffle.jpg 10 30 0.05 --mutation shuffle
-
-time python3 main.py images/whale.jpg 340 408 output/whale/mutation/10_flipbit.jpg 10 10 0.05 --mutation flipbit
-time python3 main.py images/whale.jpg 340 408 output/whale/mutation/20_flipbit.jpg 10 20 0.05 --mutation flipbit
-time python3 main.py images/whale.jpg 340 408 output/whale/mutation/30_flipbit.jpg 10 30 0.05 --mutation flipbit
-###########################################################################
+#
+## Mountain with Scharr
+############################################################################
+#mkdir -p output/mountain/scharr
+#time python3 main.py images/mountain.jpg 269 304 output/mountain/scharr/10.jpg 10 10 0.05 --scharr
+#time python3 main.py images/mountain.jpg 269 304 output/mountain/scharr/20.jpg 10 20 0.05 --scharr
+#time python3 main.py images/mountain.jpg 269 304 output/mountain/scharr/30.jpg 10 30 0.05 --scharr
+############################################################################
+#
+## Waterfall with tournament selection
+############################################################################
+#mkdir -p output/waterfall/selection
+#time python3 main.py images/waterfall.jpg 263 316 output/waterfall/selection/10_tournament.jpg 10 10 0.05 --selection tournament
+#time python3 main.py images/waterfall.jpg 263 316 output/waterfall/selection/20_tournament.jpg 10 20 0.05 --selection tournament
+#time python3 main.py images/waterfall.jpg 263 316 output/waterfall/selection/30_tournament.jpg 10 30 0.05 --selection tournament
+############################################################################
+#
+## Whale with crossover variants
+############################################################################
+#mkdir -p output/whale/crossover
+#time python3 main.py images/whale.jpg 340 408 output/whale/crossover/10_twopoint.jpg 10 10 0.05 --crossover twopoint
+#time python3 main.py images/whale.jpg 340 408 output/whale/crossover/20_twopoint.jpg 10 20 0.05 --crossover twopoint
+#time python3 main.py images/whale.jpg 340 408 output/whale/crossover/30_twopoint.jpg 10 30 0.05 --crossover twopoint
+#
+#time python3 main.py images/whale.jpg 340 408 output/whale/crossover/10_uniform.jpg 10 10 0.05 --crossover uniform
+#time python3 main.py images/whale.jpg 340 408 output/whale/crossover/20_uniform.jpg 10 20 0.05 --crossover uniform
+#time python3 main.py images/whale.jpg 340 408 output/whale/crossover/30_uniform.jpg 10 30 0.05 --crossover uniform
+############################################################################
+#
+## Whale with mutation variants
+############################################################################
+#mkdir -p output/whale/mutation
+#time python3 main.py images/whale.jpg 340 408 output/whale/mutation/10_shuffle.jpg 10 10 0.05 --mutation shuffle
+#time python3 main.py images/whale.jpg 340 408 output/whale/mutation/20_shuffle.jpg 10 20 0.05 --mutation shuffle
+#time python3 main.py images/whale.jpg 340 408 output/whale/mutation/30_shuffle.jpg 10 30 0.05 --mutation shuffle
+#
+#time python3 main.py images/whale.jpg 340 408 output/whale/mutation/10_flipbit.jpg 10 10 0.05 --mutation flipbit
+#time python3 main.py images/whale.jpg 340 408 output/whale/mutation/20_flipbit.jpg 10 20 0.05 --mutation flipbit
+#time python3 main.py images/whale.jpg 340 408 output/whale/mutation/30_flipbit.jpg 10 30 0.05 --mutation flipbit
+############################################################################
