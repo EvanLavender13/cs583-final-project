@@ -14,6 +14,36 @@ pip install -r requirements.txt
 ```
 
 ## Usage
+```
+usage: main.py [-h] [--energy {sobel,scharr}]
+               [--selection {roulette,tournament}]
+               [--crossover {onepoint,twopoint,uniform}]
+               [--mutation {uniform,shuffle,flipbit}] [--display] [--verbose]
+               input target_shape target_shape output pop_size num_gens mut_pb
+
+Genetic Seam Carving
+
+positional arguments:
+  input                 Input image
+  target_shape          Target image shape in 'row col' format
+  output                Output image
+  pop_size              Population size
+  num_gens              Number of generations
+  mut_pb                Mutation probability
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --energy {sobel,scharr}
+                        Energy map gradient
+  --selection {roulette,tournament}
+                        Selection operator
+  --crossover {onepoint,twopoint,uniform}
+                        Crossover operator
+  --mutation {uniform,shuffle,flipbit}
+                        Mutation operator
+  --display             Display visualization
+  --verbose             Display information
+```
 
 ## Examples
 
