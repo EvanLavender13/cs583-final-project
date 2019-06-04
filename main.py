@@ -9,8 +9,8 @@ from deap import base
 from deap import creator
 from deap import tools
 
-from gsc import get_fitness, construct_seam, cxSeamOnePoint, cxSeamTwoPoint, cxSeamUniform, \
-    get_energy_map_sobel, get_energy_map_scharr
+from util.gsc import get_energy_map_sobel, get_energy_map_scharr, cxSeamOnePoint, cxSeamTwoPoint, cxSeamUniform, \
+    get_fitness, construct_seam
 
 if __name__ == "__main__":
     logging.basicConfig(format="%(levelname)s: %(message)s", level=logging.INFO)
@@ -20,17 +20,18 @@ if __name__ == "__main__":
     parser.add_argument("target_shape", type=int, nargs=2, help="Target image shape in 'row col' format")
     parser.add_argument("output", type=str, help="Output image")
 
-    group = parser.add_mutually_exclusive_group()
-    group.add_argument("--sobel", action="store_true", help="Sobel gradient energy map")
-    group.add_argument("--scharr", action="store_true", help="Scharr gradient energy map")
-
     parser.add_argument("pop_size", type=int, help="Population size")
     parser.add_argument("num_gens", type=int, help="Number of generations")
     parser.add_argument("mut_pb", type=float, help="Mutation probability")
 
-    parser.add_argument("--selection", type=str, choices=["roulette", "tournament"], help="Selection operator")
-    parser.add_argument("--crossover", type=str, choices=["onepoint", "twopoint", "uniform"], help="Crossover operator")
-    parser.add_argument("--mutation", type=str, choices=["uniform", "shuffle", "flipbit"], help="Mutation operator")
+    parser.add_argument("--energy", type=str, choices=["sobel", "scharr"], default="sobel", help="Energy map gradient")
+
+    parser.add_argument("--selection", type=str, choices=["roulette", "tournament"], default="roulette",
+                        help="Selection operator")
+    parser.add_argument("--crossover", type=str, choices=["onepoint", "twopoint", "uniform"], default="onepoint",
+                        help="Crossover operator")
+    parser.add_argument("--mutation", type=str, choices=["uniform", "shuffle", "flipbit"], default="uniform",
+                        help="Mutation operator")
 
     parser.add_argument("--display", action="store_true", help="Display visualization")
     parser.add_argument("--verbose", action="store_true", help="Display information")
@@ -47,23 +48,17 @@ if __name__ == "__main__":
     # Vertical seams only, for now
     target_shape = (ROWS, args.target_shape[1])
 
-    # Select energy map function
-    if args.sobel:
-        get_energy_map = get_energy_map_sobel
-    elif args.scharr:
-        get_energy_map = get_energy_map_scharr
-    else:
-        get_energy_map = get_energy_map_sobel
-
     # Get genetic algorithm parameters
     pop_size = args.pop_size
     num_gens = args.num_gens
     mut_pb = args.mut_pb
 
+    energy = args.energy
+
     # Select genetic operators
-    selection = args.selection if args.selection else "roulette"
-    crossover = args.crossover if args.crossover else "onepoint"
-    mutation = args.mutation if args.mutation else "uniform"
+    selection = args.selection
+    crossover = args.crossover
+    mutation = args.mutation
 
     # Stuff to look at
     display = args.display
@@ -72,9 +67,16 @@ if __name__ == "__main__":
     logging.info("Carving %s to size %s and saving result to %s" % (args.input, target_shape, args.output))
     logging.info("Evolving populations of size %s for %s generations with a mutation probability of %s" %
                  (pop_size, num_gens, mut_pb))
+    logging.info("Energy function: %s" % energy)
     logging.info("Selection operator: %s" % selection)
     logging.info("Crossover operator: %s" % crossover)
     logging.info("Mutation operator: %s" % mutation)
+
+    # Select energy map function
+    if energy == "sobel":
+        get_energy_map = get_energy_map_sobel
+    elif energy == "scharr":
+        get_energy_map = get_energy_map_scharr
 
     creator.create("FitnessMax", base.Fitness, weights=(1.0,))
     creator.create("Individual", list, fitness=creator.FitnessMax)
