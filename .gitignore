@@ -3,3 +3,4 @@ venv/
 __pycache__/
 seam-carving/
 energy_map.jpg
+test/
