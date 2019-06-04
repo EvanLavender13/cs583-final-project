@@ -3,7 +3,7 @@
 
 This thing does a thing.
 
-![](https://github.com/EvanLavender13/cs583-final-project/blob/master/output/gifs/mountain.gif)
+![](https://github.com/EvanLavender13/cs583-final-project/blob/master/output/gifs/waterfall.gif)
 
 ## Requirements
 
