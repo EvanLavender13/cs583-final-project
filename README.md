@@ -1,7 +1,7 @@
 # Genetic Seam Carving
-> Blah blah blah
+> Genetic Seam Carving: A Genetic Algorithm Approach for Content-Aware Image Retargeting
 
-This thing does a thing.
+Implementation of the genetic seam carving algorithm described in the references below. Genetic Seam Carving is an evolutionary algorithm for content-aware image resizing. 
 
 ![](https://github.com/EvanLavender13/cs583-final-project/blob/master/output/gifs/waterfall.gif)
 
@@ -59,3 +59,7 @@ python3 main.py whale.jpg 340 408 whale_out.jpg 10 30 0.05 --crossover uniform
 
 ![](https://github.com/EvanLavender13/cs583-final-project/blob/master/images/whale.jpg) 
 ![](https://github.com/EvanLavender13/cs583-final-project/blob/master/output/whale/crossover/30_uniform.jpg)
+
+## References
+- [Genetic Seam Carving: A Genetic Algorithm Approach for Content-Aware Image Retargeting](https://www.researchgate.net/publication/277132230_Genetic_Seam_Carving_A_Genetic_Algorithm_Approach_for_Content-Aware_Image_Retargeting)
+- [An improved Genetic Algorithms-based Seam Carving method](https://www.researchgate.net/publication/299533436_An_improved_Genetic_Algorithms-based_Seam_Carving_method)
