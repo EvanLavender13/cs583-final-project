@@ -164,7 +164,7 @@ if __name__ == "__main__":
                 mutant[mutant.pivot] = 0
                 toolbox.mutate(mutant)
 
-                if np.random.random() < 1.0:
+                if np.random.random() < mut_pb:
                     mutant.pivot = toolbox.pivot_index(high=target_image.shape[0] - 1)
                     mutant[mutant.pivot] = toolbox.pivot_value(high=target_image.shape[1] - 1)
                 else:
