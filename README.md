@@ -42,7 +42,6 @@ optional arguments:
   --mutation {uniform,shuffle,flipbit}
                         Mutation operator
   --display             Display visualization
-  --verbose             Display information
 ```
 
 ## Examples
