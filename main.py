@@ -34,7 +34,6 @@ if __name__ == "__main__":
                         help="Mutation operator")
 
     parser.add_argument("--display", action="store_true", help="Display visualization")
-    parser.add_argument("--verbose", action="store_true", help="Display information")
 
     args = parser.parse_args()
 
@@ -62,7 +61,6 @@ if __name__ == "__main__":
 
     # Stuff to look at
     display = args.display
-    verbose = args.verbose
 
     logging.info("Carving %s to size %s and saving result to %s" % (args.input, target_shape, args.output))
     logging.info("Evolving populations of size %s for %s generations with a mutation probability of %s" %
@@ -182,9 +180,6 @@ if __name__ == "__main__":
             population[:] = offspring
 
         u_max = np.max([individual.fitness.values[0] for individual in population])
-
-        if verbose:
-            logging.info("Maximum fitness: %s" % u_max)
 
         S = [individual for individual in population if individual.fitness.values[0] == u_max and u_max > 1.0]
 
