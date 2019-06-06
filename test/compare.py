@@ -13,6 +13,9 @@ if __name__ == "__main__":
     pop_file = "pop_data.pickle"
     gen_file = "gen_data.pickle"
 
+    open(pop_file, "wb")
+    open(gen_file, "wb")
+
     pop_data_dict = {}
     gen_data_dict = {}
 
