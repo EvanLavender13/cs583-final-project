@@ -92,7 +92,7 @@ if __name__ == "__main__":
             for i in range(10):
                 logging.info("Run #%s" % (i + 1))
 
-                os.system("python3 ../main.py %s 340 408 %s 10 10 %s" % (input_image, OUTPUT_IMAGE, mut))
+                os.system("python3 ../main.py %s 263 316 %s 10 10 %s" % (input_image, OUTPUT_IMAGE, mut))
 
                 avg_struct_sim.append(structural_sim(input_image, OUTPUT_IMAGE))
                 avg_pix_sim.append(pixel_sim(input_image, OUTPUT_IMAGE))
