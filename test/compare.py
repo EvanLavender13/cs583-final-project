@@ -16,6 +16,7 @@ if __name__ == "__main__":
     sel_file = "sel_data.pickle"
     crx_file = "crx_data.pickle"
     mtt_file = "mtt_data.pickle"
+    eng_file = "eng_data.pickle"
 
     pop_data_dict = {}
     gen_data_dict = {}
@@ -23,6 +24,7 @@ if __name__ == "__main__":
     sel_data_dict = {}
     crx_data_dict = {}
     mtt_data_dict = {}
+    eng_data_dict = {}
 
     input_image = "../images/waterfall.jpg"
 
@@ -114,7 +116,7 @@ if __name__ == "__main__":
         # Dump gen data
         pickle.dump(mut_data_dict, open(mut_file, "wb"))
 
-    if True:
+    if False:
         for sel in ["roulette", "tournament"]:
             logging.info("***** Selection Operator %s *****" % sel)
 
@@ -142,7 +144,7 @@ if __name__ == "__main__":
         # Dump gen data
         pickle.dump(sel_data_dict, open(sel_file, "wb"))
 
-    if True:
+    if False:
         for crx in ["onepoint", "twopoint", "uniform"]:
             logging.info("***** Crossover Operator %s *****" % crx)
 
@@ -170,7 +172,7 @@ if __name__ == "__main__":
         # Dump gen data
         pickle.dump(crx_data_dict, open(crx_file, "wb"))
 
-    if True:
+    if False:
         for mtt in ["uniform", "shuffle", "flipbit"]:
             logging.info("***** Mutation Operator %s *****" % mtt)
 
@@ -197,3 +199,31 @@ if __name__ == "__main__":
 
         # Dump gen data
         pickle.dump(mtt_data_dict, open(mtt_file, "wb"))
+
+    if True:
+        for eng in ["sobel", "scharr"]:
+            logging.info("***** Energy Operator %s *****" % eng)
+
+            avg_struct_sim = []
+            avg_pix_sim = []
+            avg_sif_sim = []
+            avg_emd = []
+
+            for i in range(10):
+                logging.info("Run #%s" % (i + 1))
+
+                os.system("python3 ../main.py %s 263 316 %s 10 10 0.1 --energy %s" % (input_image, OUTPUT_IMAGE, eng))
+
+                avg_struct_sim.append(structural_sim(input_image, OUTPUT_IMAGE))
+                avg_pix_sim.append(pixel_sim(input_image, OUTPUT_IMAGE))
+                avg_sif_sim.append(sift_sim(input_image, OUTPUT_IMAGE))
+                avg_emd.append(earth_movers_distance(input_image, OUTPUT_IMAGE))
+
+            eng_data_dict[eng] = {"structural_similarity": np.mean(avg_struct_sim),
+                                  "pixel_similarity": np.mean(avg_pix_sim),
+                                  "sift_similarity": np.mean(avg_sif_sim), "earth_movers_distance": np.mean(avg_emd)}
+
+            print(eng, eng_data_dict[eng])
+
+        # Dump gen data
+        pickle.dump(eng_data_dict, open(eng_file, "wb"))
