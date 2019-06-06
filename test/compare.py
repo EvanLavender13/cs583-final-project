@@ -13,18 +13,14 @@ if __name__ == "__main__":
     pop_file = "pop_data.pickle"
     gen_file = "gen_data.pickle"
 
-    open(pop_file, "wb")
-    open(gen_file, "wb")
-
     pop_data_dict = {}
     gen_data_dict = {}
 
     input_image = "../images/waterfall.jpg"
 
     logging.info("********** POPULATION SIZE **********")
-    pop_pickle = pickle.load(open(pop_file, "rb"))
 
-    if not pop_pickle:
+    if False:
         for pop in [3, 6, 10, 25, 100]:
             logging.info("***** Population size %s *****" % pop)
 
@@ -53,9 +49,8 @@ if __name__ == "__main__":
         pickle.dump(pop_data_dict, open(pop_file, "wb"))
 
     logging.info("********** NUMBER OF GENERATIONS **********")
-    gen_pickle = pickle.load(open(gen_file, "rb"))
 
-    if not gen_pickle:
+    if True:
         for gen in [5, 10, 25, 50, 100]:
             logging.info("***** %s Generations *****" % gen)
 
