@@ -18,7 +18,7 @@ pip install -r requirements.txt
 usage: main.py [-h] [--energy {sobel,scharr}]
                [--selection {roulette,tournament}]
                [--crossover {onepoint,twopoint,uniform}]
-               [--mutation {uniform,shuffle,flipbit}] [--display] [--verbose]
+               [--mutation {uniform,shuffle,flipbit}] [--display]
                input target_shape target_shape output pop_size num_gens mut_pb
 
 Genetic Seam Carving
